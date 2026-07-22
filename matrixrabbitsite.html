@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATRIXRABBIT1337 :: SECURITY TERMINAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#050805; --bg2:#0a0e0a;
+    --green:#00ff41; --green-dim:#00b32c; --green-dark:#008f11; --green-ghost:#0d3d18;
+    --text:#b8ffc8; --text-dim:#5f8f68;
+    --danger:#ff2b3d; --danger-dim:#a01822; --amber:#ffb000; --cyan:#00e0ff;
+    --panel:rgba(3,18,7,0.72); --line:rgba(0,255,65,0.28);
+    --display:'VT323',monospace; --mono:'Share Tech Mono',monospace; --body:'IBM Plex Mono','Share Tech Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:var(--body);line-height:1.65;overflow-x:hidden;position:relative;letter-spacing:.02em}
+
+  #matrix{position:fixed;inset:0;width:100%;height:100%;z-index:0;opacity:.5}
+  .crt{position:fixed;inset:0;z-index:2;pointer-events:none;
+    background:radial-gradient(circle at center,transparent 55%,rgba(0,0,0,.55) 100%),
+      repeating-linear-gradient(0deg,rgba(0,0,0,0) 0px,rgba(0,0,0,0) 2px,rgba(0,20,5,.25) 3px,rgba(0,0,0,0) 4px);
+    mix-blend-mode:multiply}
+  .crt::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(18,255,90,.03),rgba(0,0,0,0) 4%);animation:flicker 6s infinite steps(60)}
+  @keyframes flicker{0%,100%{opacity:.9}50%{opacity:.75}92%{opacity:.95}}
+  .wrap{position:relative;z-index:3}
+
+  /* ---------- MASK INTRO ---------- */
+  #intro-screen{position:fixed;inset:0;z-index:50;background:#020402;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+  #intro-screen svg.mask{width:min(300px,64vw);height:auto;filter:drop-shadow(0 0 18px rgba(0,255,65,.55));animation:maskFloat 5s ease-in-out infinite}
+  @keyframes maskFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  #intro-screen .legion{margin-top:30px;font-family:var(--mono);color:var(--green);font-size:clamp(13px,2.6vw,17px);text-shadow:0 0 10px rgba(0,255,65,.6);min-height:2.4em;letter-spacing:1px;max-width:640px}
+  #intro-screen .enter{margin-top:26px;font-family:var(--mono);font-size:14px;color:var(--text);background:none;border:1px solid var(--green);padding:10px 26px;letter-spacing:3px;cursor:pointer;transition:.15s}
+  #intro-screen .enter:hover{background:var(--green);color:#020402;box-shadow:0 0 22px rgba(0,255,65,.5)}
+  .cursor{display:inline-block;width:.55ch;height:1em;background:var(--green);vertical-align:-2px;animation:blink 1s steps(2) infinite;box-shadow:0 0 10px var(--green)}
+  @keyframes blink{50%{opacity:0}}
+
+  /* ---------- HERO ---------- */
+  header.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:80px 20px 40px}
+  .badge{font-family:var(--mono);font-size:12px;color:var(--green);border:1px solid var(--line);padding:5px 12px;letter-spacing:3px;margin-bottom:26px;background:rgba(0,20,5,.4)}
+  .glitch{font-family:var(--display);font-size:clamp(44px,11vw,140px);line-height:.9;color:var(--green);text-shadow:0 0 18px rgba(0,255,65,.55);position:relative;letter-spacing:2px}
+  .glitch::before,.glitch::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%;overflow:hidden}
+  .glitch::before{color:var(--danger);z-index:-1;animation:gl1 2.6s infinite linear alternate-reverse}
+  .glitch::after{color:var(--cyan);z-index:-2;animation:gl2 3.4s infinite linear alternate-reverse}
+  @keyframes gl1{0%{clip-path:inset(10% 0 85% 0);transform:translate(-3px,-1px)}20%{clip-path:inset(60% 0 20% 0);transform:translate(2px,1px)}40%{clip-path:inset(30% 0 55% 0);transform:translate(-2px,0)}60%{clip-path:inset(80% 0 5% 0);transform:translate(3px,-1px)}80%{clip-path:inset(15% 0 70% 0);transform:translate(-1px,2px)}100%{clip-path:inset(45% 0 40% 0);transform:translate(1px,0)}}
+  @keyframes gl2{0%{clip-path:inset(70% 0 12% 0);transform:translate(3px,1px)}25%{clip-path:inset(20% 0 60% 0);transform:translate(-3px,-1px)}50%{clip-path:inset(50% 0 30% 0);transform:translate(2px,1px)}75%{clip-path:inset(5% 0 82% 0);transform:translate(-2px,0)}100%{clip-path:inset(38% 0 45% 0);transform:translate(1px,-2px)}}
+  .hero-sub{margin-top:22px;font-family:var(--mono);font-size:clamp(14px,2.6vw,19px);color:var(--text);max-width:720px}
+  .hero-sub .jk{color:var(--danger)} .hero-sub .ok{color:var(--green)}
+  .hero-tag{margin-top:14px;font-family:var(--mono);color:var(--text-dim);font-size:13px;letter-spacing:2px}
+  .scroll-hint{margin-top:44px;color:var(--green);font-family:var(--mono);font-size:13px;animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(8px);opacity:.5}}
+
+  /* ---------- NAV ---------- */
+  nav{position:sticky;top:0;z-index:20;background:rgba(2,6,3,.88);backdrop-filter:blur(6px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:2px;justify-content:center;padding:8px 10px}
+  nav a{font-family:var(--mono);font-size:12px;color:var(--text-dim);text-decoration:none;padding:6px 10px;letter-spacing:1px;border:1px solid transparent;transition:.15s}
+  nav a:hover,nav a:focus{color:var(--green);border-color:var(--line);text-shadow:0 0 8px rgba(0,255,65,.6)}
+
+  /* ---------- SECTIONS ---------- */
+  section{max-width:1080px;margin:0 auto;padding:70px 20px}
+  .sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:14px;flex-wrap:wrap}
+  .sec-num{font-family:var(--display);font-size:clamp(26px,5vw,40px);color:var(--green-dark)}
+  .sec-title{font-family:var(--mono);font-size:clamp(19px,4.2vw,32px);color:var(--green);letter-spacing:2px;text-shadow:0 0 10px rgba(0,255,65,.4)}
+  .sec-intro{color:var(--text-dim);font-size:15px;margin-bottom:28px;max-width:860px}
+  .lead{max-width:860px;font-size:15px;margin-bottom:22px}
+  .prompt::before{content:"root@anonymous:~# ";color:var(--green-dark)}
+  h4.blk{font-family:var(--mono);color:var(--green);letter-spacing:1px;font-size:17px;margin:34px 0 12px;border-left:3px solid var(--green);padding-left:12px}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+  .card{background:var(--panel);border:1px solid var(--line);padding:20px;position:relative;transition:.2s;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;height:100%;width:3px;background:var(--green-dark);box-shadow:0 0 12px var(--green)}
+  .card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 0 28px rgba(0,255,65,.18)}
+  .card.danger::before{background:var(--danger);box-shadow:0 0 12px var(--danger)}
+  .card h3{font-family:var(--mono);color:var(--green);font-size:18px;letter-spacing:1px;margin-bottom:4px}
+  .card.danger h3{color:var(--danger)}
+  .card .kind{font-family:var(--mono);font-size:11px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+  .card p{font-size:14px;margin-bottom:12px}
+  .why{border-left:2px solid var(--amber);padding:8px 12px;background:rgba(255,176,0,.06);font-size:13.5px;margin-bottom:12px}
+  .why b{color:var(--amber);font-family:var(--mono);letter-spacing:1px}
+  .fix{border-left:2px solid var(--green);padding:8px 12px;background:rgba(0,255,65,.06);font-size:13.5px}
+  .fix b{color:var(--green);font-family:var(--mono);letter-spacing:1px}
+
+  figure{margin:30px 0;background:var(--panel);border:1px solid var(--line);padding:18px}
+  figure svg{width:100%;height:auto;display:block}
+  figcaption{font-family:var(--mono);font-size:12px;color:var(--text-dim);text-align:center;margin-top:12px;letter-spacing:1px}
+  .svg-label{font-family:var(--mono);font-size:13px;fill:var(--text)}
+  .svg-label-g{font-family:var(--mono);font-size:13px;fill:var(--green)}
+  .svg-label-r{font-family:var(--mono);font-size:13px;fill:var(--danger)}
+  .svg-label-c{font-family:var(--mono);font-size:13px;fill:var(--cyan)}
+  .svg-small{font-family:var(--mono);font-size:10.5px;fill:var(--text-dim)}
+  .flow-dash{stroke-dasharray:6 6;animation:march 1s linear infinite}
+  @keyframes march{to{stroke-dashoffset:-24}}
+
+  /* OWASP rows */
+  .owasp{display:grid;gap:14px}
+  .owasp-row{display:grid;grid-template-columns:64px 1fr;gap:16px;background:var(--panel);border:1px solid var(--line);padding:16px 18px;align-items:start;transition:.2s}
+  .owasp-row:hover{border-color:var(--green);box-shadow:0 0 20px rgba(0,255,65,.14)}
+  .owasp-id{font-family:var(--display);font-size:34px;color:var(--danger);text-align:center;line-height:1;text-shadow:0 0 10px rgba(255,43,61,.5)}
+  .owasp-row h4{font-family:var(--mono);color:var(--green);font-size:16px;letter-spacing:1px;margin-bottom:6px}
+  .owasp-row p{font-size:13.5px;margin-bottom:10px}
+
+  /* TIMELINE (vertical) */
+  .timeline{position:relative;margin:26px 0 10px;padding-left:6px}
+  .timeline::before{content:"";position:absolute;left:12px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--green),var(--danger));box-shadow:0 0 10px rgba(0,255,65,.4)}
+  .tl-item{position:relative;padding:0 0 26px 42px}
+  .tl-item::before{content:"";position:absolute;left:6px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--green);box-shadow:0 0 10px var(--green)}
+  .tl-item.red::before{border-color:var(--danger);box-shadow:0 0 10px var(--danger)}
+  .tl-year{font-family:var(--display);font-size:26px;color:var(--green);line-height:1}
+  .tl-item.red .tl-year{color:var(--danger)}
+  .tl-name{font-family:var(--mono);font-size:16px;color:var(--text);letter-spacing:1px;margin:2px 0 6px}
+  .tl-item p{font-size:13.5px;max-width:820px}
+  .tl-who{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--amber);border:1px solid rgba(255,176,0,.4);padding:2px 8px;margin:8px 8px 0 0;background:rgba(255,176,0,.05)}
+
+  ul.check{list-style:none;display:grid;gap:10px;max-width:860px}
+  ul.check li{font-size:14.5px;padding-left:30px;position:relative}
+  ul.check li::before{content:"[+]";position:absolute;left:0;top:0;color:var(--green);font-family:var(--mono)}
+  ul.tips{list-style:none;display:grid;gap:8px;margin-top:6px}
+  ul.tips li{font-size:13.5px;padding-left:24px;position:relative}
+  ul.tips li::before{content:"›";position:absolute;left:6px;color:var(--green);font-family:var(--mono)}
+
+  .discord{background:linear-gradient(135deg,rgba(0,30,10,.7),rgba(2,6,3,.9));border:1px solid var(--green);box-shadow:0 0 40px rgba(0,255,65,.12);padding:38px 26px;text-align:center}
+  .discord .handle{font-family:var(--display);font-size:clamp(30px,8vw,64px);color:var(--green);text-shadow:0 0 20px rgba(0,255,65,.6);letter-spacing:1px;word-break:break-word}
+  .discord .row{display:inline-flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
+  .chip{font-family:var(--mono);border:1px solid var(--line);padding:10px 18px;color:var(--text);font-size:14px;background:rgba(0,20,5,.5);cursor:pointer;transition:.15s}
+  .chip:hover{border-color:var(--green);color:var(--green);box-shadow:0 0 16px rgba(0,255,65,.25)}
+  .chip b{color:var(--green)} .copied{color:var(--green)!important;border-color:var(--green)!important}
+
+  .ethics{max-width:860px;margin:0 auto 10px;border:1px dashed var(--amber);padding:14px 18px;color:var(--amber);font-size:13px;background:rgba(255,176,0,.05)}
+  .note{max-width:860px;border-left:2px solid var(--cyan);background:rgba(0,224,255,.05);padding:10px 14px;font-size:13px;color:var(--text);margin:18px 0}
+  .note b{color:var(--cyan)}
+
+  footer{text-align:center;padding:50px 20px 70px;border-top:1px solid var(--line);color:var(--text-dim);font-family:var(--mono);font-size:12.5px;letter-spacing:1px}
+  footer .warn{color:var(--amber);margin-bottom:8px}
+
+  /* interactive terminal */
+  .term-box{border:1px solid var(--line);background:#020402;margin:22px 0;box-shadow:0 0 30px rgba(0,255,65,.1);overflow:hidden}
+  .term-bar{display:flex;align-items:center;gap:8px;background:rgba(0,25,8,.7);border-bottom:1px solid var(--line);padding:8px 12px;font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .dot.r{background:#ff5f56}.dot.y{background:#ffbd2e}.dot.g{background:#27c93f}
+  .term-out{font-family:var(--mono);font-size:13.5px;line-height:1.5;padding:14px;height:340px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;color:var(--text)}
+  .term-out .cmd{color:#c8ffd0}.term-out .sys{color:var(--green)}.term-out .warn2{color:var(--amber)}.term-out .err{color:var(--danger)}.term-out .dim{color:var(--text-dim)}
+  .term-input{display:flex;align-items:center;gap:8px;border-top:1px solid var(--line);padding:10px 14px;background:rgba(0,15,5,.5)}
+  .term-prompt{font-family:var(--mono);color:var(--green);font-size:13.5px;white-space:nowrap}
+  #termIn{flex:1;background:none;border:none;outline:none;color:#c8ffd0;font-family:var(--mono);font-size:13.5px;caret-color:var(--green)}
+  /* methodology phases */
+  .phasewrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:8px}
+  .phase{background:var(--panel);border:1px solid var(--line);padding:14px}
+  .phase .n{font-family:var(--display);font-size:26px;color:var(--green);line-height:1}
+  .phase h5{font-family:var(--mono);color:var(--text);font-size:13.5px;letter-spacing:1px;margin:4px 0 6px}
+  .phase p{font-size:12.5px;color:var(--text-dim)}
+  .phase.red .n{color:var(--danger)}
+  @media (max-width:600px){nav a{font-size:10.5px;padding:5px 7px}.owasp-row{grid-template-columns:48px 1fr;gap:10px}.owasp-id{font-size:26px}.term-out{height:300px}}
+  @media (prefers-reduced-motion:reduce){
+    #matrix{opacity:.3}
+    .glitch::before,.glitch::after,.crt::after,.scroll-hint,.flow-dash,svg.mask{animation:none!important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<canvas id="matrix"></canvas>
+<div class="crt"></div>
+
+<!-- ================= MASK INTRO ================= -->
+<div id="intro-screen">
+  <svg class="mask" viewBox="0 0 300 340" role="img" aria-label="Anonymous Guy Fawkes mask">
+    <defs>
+      <radialGradient id="cheek" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ff9cb1" stop-opacity="0.95"/>
+        <stop offset="65%" stop-color="#ef7d97" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#ef7d97" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <g id="maskGroup">
+      <path d="M150 32 C116 30 84 34 62 46 C46 58 38 74 38 92 C38 118 41 150 50 178 C60 214 82 258 150 320 C218 258 240 214 250 178 C259 150 262 118 262 92 C262 74 254 58 238 46 C216 34 184 30 150 32 Z"
+            fill="#f2f0e6" stroke="#141414" stroke-width="2.5"/>
+      <ellipse cx="88" cy="188" rx="23" ry="16" fill="url(#cheek)"/>
+      <ellipse cx="212" cy="188" rx="23" ry="16" fill="url(#cheek)"/>
+      <path d="M60 122 C88 90 124 86 143 116 C121 100 95 106 70 132 Z" fill="#141414"/>
+      <path d="M240 122 C212 90 176 86 157 116 C179 100 205 106 230 132 Z" fill="#141414"/>
+      <path d="M68 150 C90 132 124 132 141 148 C123 166 94 168 68 150 Z" fill="#161616"/>
+      <path d="M232 150 C210 132 176 132 159 148 C177 166 206 168 232 150 Z" fill="#161616"/>
+      <path d="M150 132 C150 168 146 188 150 206" fill="none" stroke="#3a3a34" stroke-width="2" opacity="0.5"/>
+      <path d="M150 206 C142 214 133 211 131 202" fill="none" stroke="#3a3a34" stroke-width="2" opacity="0.5"/>
+      <path d="M150 206 C158 214 167 211 169 202" fill="none" stroke="#3a3a34" stroke-width="2" opacity="0.5"/>
+      <path d="M150 216 C126 234 100 232 90 214 C85 207 92 199 98 205" fill="none" stroke="#141414" stroke-width="5" stroke-linecap="round"/>
+      <path d="M150 216 C174 234 200 232 210 214 C215 207 208 199 202 205" fill="none" stroke="#141414" stroke-width="5" stroke-linecap="round"/>
+      <path d="M120 240 Q150 256 180 240" fill="none" stroke="#141414" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M150 250 C145 268 147 282 150 296 C153 282 155 268 150 250 Z" fill="#141414"/>
+      <path d="M150 296 C150 304 155 308 160 305" fill="none" stroke="#141414" stroke-width="3" stroke-linecap="round"/>
+    </g>
+  </svg>
+  <div class="legion" id="legionText"></div>
+  <button class="enter" id="enterBtn">[ ENTER ]</button>
+</div>
+
+<div class="wrap" id="site" style="display:none">
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="badge">// WE ARE LEGION · SECURITY TERMINAL</div>
+  <h1 class="glitch" data-text="MATRIX RABBIT">MATRIX RABBIT</h1>
+  <p class="hero-sub">
+    <span class="jk">"You have been hacked by @MatrixRabbit1337 on discord"</span><br>
+    <span class="ok">— just kidding.</span> Welcome to the site. <b>No wifi here.</b>
+  </p>
+  <p class="hero-tag">DEFENSE THROUGH UNDERSTANDING · KNOW THE ATTACK · KILL THE ATTACK</p>
+  <div class="scroll-hint">▼ SCROLL TO JACK IN ▼</div>
+</header>
+
+<!-- ================= NAV ================= -->
+<nav>
+  <a href="#intro">/intro</a>
+  <a href="#malware">/malware</a>
+  <a href="#history">/history</a>
+  <a href="#protect">/protect</a>
+  <a href="#phone">/phone</a>
+  <a href="#network">/network</a>
+  <a href="#owasp">/owasp</a>
+  <a href="#secure-pc">/secure-pc</a>
+  <a href="#browser">/browser</a>
+  <a href="#coding">/coding</a>
+  <a href="#terminal">/terminal</a>
+  <a href="#methods">/methodology</a>
+  <a href="#underground">/anon-tor</a>
+  <a href="#harden">/harden</a>
+  <a href="#discord">/discord</a>
+</nav>
+
+<!-- ================= 00 INTRO ================= -->
+<section id="intro">
+  <div class="sec-head"><span class="sec-num">00</span><span class="sec-title">INITIALIZE</span></div>
+  <p class="sec-intro prompt">whoami &amp;&amp; cat mission.txt</p>
+  <p class="lead">This is a training terminal. Every attack below is explained so you can <b style="color:var(--green)">defend</b> against it — on your computer, your phone, your network, and the websites you build. For each threat you get three things: <b style="color:var(--green)">what it is</b>, <b style="color:var(--amber)">why it works</b> (the actual mechanism the attacker abuses), and <b style="color:var(--green)">how to shut it down</b>. Later sections add the real <b style="color:var(--green)">history</b> — who wrote the world's most infamous malware and why — and how anonymity tools and the underground hacking scene actually began.</p>
+  <p class="lead">One idea ties the whole terminal together: <b style="color:var(--amber)">computers do exactly what they're told, at the privilege they're told to use, and they trust whatever speaks the right protocol.</b> Almost every attack is just an abuse of misplaced trust — in a file, a message, a network, a login, or a line of input. Defense is the discipline of verifying before you trust.</p>
+  <div class="ethics">⚠ ETHICS PROTOCOL: This material is for learning and defense only. Test only on systems you own or have written permission to test. Attacking systems you don't own is a crime in most of the world. Understand attacks to protect people — not to harm them.</div>
+</section>
+
+<!-- ================= 01 MALWARE ================= -->
+<section id="malware">
+  <div class="sec-head"><span class="sec-num">01</span><span class="sec-title">COMPUTER · MALWARE</span></div>
+  <p class="sec-intro">Malware ("malicious software") is any code written to run against your interests. The categories below describe <i>behavior</i> — a single real-world sample often combines several (a trojan that drops a rootkit that installs a keylogger). Learn the behaviors and you can reason about anything new.</p>
+
+  <figure>
+    <svg viewBox="0 0 720 220" role="img" aria-label="Malware infection chain diagram">
+      <rect x="20" y="80" width="120" height="60" fill="none" stroke="#00ff41" stroke-width="1.5"/>
+      <text x="80" y="105" text-anchor="middle" class="svg-label-g">LURE</text>
+      <text x="80" y="122" text-anchor="middle" class="svg-small">email / crack / usb</text>
+      <rect x="200" y="80" width="120" height="60" fill="none" stroke="#ffb000" stroke-width="1.5"/>
+      <text x="260" y="105" text-anchor="middle" class="svg-label">EXECUTION</text>
+      <text x="260" y="122" text-anchor="middle" class="svg-small">you click / run</text>
+      <rect x="380" y="80" width="120" height="60" fill="none" stroke="#ffb000" stroke-width="1.5"/>
+      <text x="440" y="105" text-anchor="middle" class="svg-label">PRIVILEGE</text>
+      <text x="440" y="122" text-anchor="middle" class="svg-small">escalate / persist</text>
+      <rect x="560" y="80" width="140" height="60" fill="none" stroke="#ff2b3d" stroke-width="1.5"/>
+      <text x="630" y="105" text-anchor="middle" class="svg-label-r">PAYLOAD</text>
+      <text x="630" y="122" text-anchor="middle" class="svg-small">steal / encrypt / spy</text>
+      <line x1="140" y1="110" x2="200" y2="110" stroke="#00ff41" stroke-width="2" class="flow-dash"/>
+      <line x1="320" y1="110" x2="380" y2="110" stroke="#ffb000" stroke-width="2" class="flow-dash"/>
+      <line x1="500" y1="110" x2="560" y2="110" stroke="#ff2b3d" stroke-width="2" class="flow-dash"/>
+      <polygon points="200,110 192,106 192,114" fill="#00ff41"/>
+      <polygon points="380,110 372,106 372,114" fill="#ffb000"/>
+      <polygon points="560,110 552,106 552,114" fill="#ff2b3d"/>
+      <text x="360" y="35" text-anchor="middle" class="svg-label-g">THE INFECTION CHAIN — break any link and the attack dies</text>
+    </svg>
+    <figcaption>FIG 1.0 — every malware family follows this chain. Your defenses target each stage.</figcaption>
+  </figure>
+
+  <div class="grid">
+    <div class="card danger"><h3>VIRUS</h3><div class="kind">self-replicating</div>
+      <p>Attaches to a real file or program. When you open the host, the virus code runs too and copies itself into other files. It cannot spread on its own — it needs you to run the infected host.</p>
+      <div class="why"><b>WHY IT WORKS:</b> It rides a file you trust. Once you double-click, the OS can't tell "your document" from "your document + hidden code."</div>
+      <div class="fix"><b>DEFENSE:</b> Don't run untrusted files; keep antivirus + OS updated; enable "show file extensions" so <code>photo.jpg.exe</code> can't hide.</div></div>
+
+    <div class="card danger"><h3>WORM</h3><div class="kind">self-spreading, no host</div>
+      <p>Standalone code that copies itself across a network on its own — no click required — by exploiting an unpatched service. One vulnerable machine infects the next automatically.</p>
+      <div class="why"><b>WHY IT WORKS:</b> It abuses a known software bug on machines that were never patched. Spread is exponential once it starts.</div>
+      <div class="fix"><b>DEFENSE:</b> Patch fast, segment networks, close unused ports, run a firewall. Worms starve on a patched network.</div></div>
+
+    <div class="card danger"><h3>TROJAN</h3><div class="kind">disguise</div>
+      <p>Malware wearing a useful costume — a "free" game, a cracked app, a fake installer or update. Does its advertised job while quietly doing the attacker's.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Pure social engineering — you <i>chose</i> to install it, so every OS warning was already dismissed by you.</div>
+      <div class="fix"><b>DEFENSE:</b> Install only from official sources; verify signatures/hashes; treat "free cracked software" as bait.</div></div>
+
+    <div class="card danger"><h3>RANSOMWARE</h3><div class="kind">extortion</div>
+      <p>Encrypts your files with a key only the attacker holds, then demands payment (usually crypto) to decrypt. Modern strains also steal a copy first and threaten to leak it ("double extortion").</p>
+      <div class="why"><b>WHY IT WORKS:</b> Strong encryption is irreversible without the key. It weaponizes real cryptography against you, and panic pushes victims to pay.</div>
+      <div class="fix"><b>DEFENSE:</b> Offline + versioned backups (the one real cure), least-privilege accounts, and fast patching. Backups make the ransom pointless.</div></div>
+
+    <div class="card danger"><h3>SPYWARE / KEYLOGGER</h3><div class="kind">surveillance</div>
+      <p>Silently records keystrokes, screenshots, passwords, camera/mic and browsing — then exfiltrates them to the attacker.</p>
+      <div class="why"><b>WHY IT WORKS:</b> It runs at your privilege level, so it can legitimately read what you type. Nothing looks "broken," so you never notice.</div>
+      <div class="fix"><b>DEFENSE:</b> 2FA (a stolen password alone won't log in), a password manager (autofill defeats keyloggers), EDR/antimalware, camera covers.</div></div>
+
+    <div class="card danger"><h3>ROOTKIT / BOOTKIT</h3><div class="kind">stealth + persistence</div>
+      <p>Buries itself deep — kernel, bootloader, or firmware — to hide other malware and survive reboots and even OS reinstalls.</p>
+      <div class="why"><b>WHY IT WORKS:</b> It runs <i>below</i> the tools you'd use to detect it. The OS itself is compromised and lies to you about what's running.</div>
+      <div class="fix"><b>DEFENSE:</b> Secure Boot, signed drivers, firmware updates. If confirmed, wipe and reimage — you can't trust a rooted system.</div></div>
+
+    <div class="card danger"><h3>BOTNET AGENT</h3><div class="kind">remote control</div>
+      <p>Turns your machine into a soldier in an army of infected devices, remotely controlled for DDoS, spam, credential stuffing, or crypto-mining.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Owners rarely notice a little extra CPU or traffic. Power comes from scale — millions of quiet, unpatched devices.</div>
+      <div class="fix"><b>DEFENSE:</b> Patch, change default passwords (especially IoT/routers), monitor outbound traffic for odd connections.</div></div>
+
+    <div class="card danger"><h3>FILELESS / LIVING-OFF-THE-LAND</h3><div class="kind">no file to scan</div>
+      <p>Runs entirely in memory using trusted built-in tools (PowerShell, scripting engines, macros) so there's no malicious file on disk to detect.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Classic antivirus scans files — this leaves none — and it abuses legitimate admin tools, so activity looks "normal."</div>
+      <div class="fix"><b>DEFENSE:</b> Behavior-based EDR, script-block logging, restrict/monitor PowerShell, disable Office macros by default, least privilege.</div></div>
+
+    <div class="card danger"><h3>ADWARE / PUP</h3><div class="kind">nuisance + tracking</div>
+      <p>Floods you with ads, hijacks your browser/search, and quietly profiles you. "Potentially Unwanted Programs" ride along with free installers.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Bundled installers pre-check "extras," and users click Next-Next-Finish without reading.</div>
+      <div class="fix"><b>DEFENSE:</b> Choose "custom install" and untick extras; use reputable ad/tracker blockers; remove unknown browser extensions.</div></div>
+
+    <div class="card danger"><h3>WIPER</h3><div class="kind">pure destruction</div>
+      <p>Looks like ransomware but there is no key and no recovery — its only goal is to destroy data and systems. Often used in sabotage and cyber-warfare.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Victims waste time trying to "pay" or "decrypt" while the damage is already permanent.</div>
+      <div class="fix"><b>DEFENSE:</b> Immutable offline backups, network segmentation, and treating any "ransom" as unrecoverable — restore, don't negotiate.</div></div>
+  </div>
+
+  <h4 class="blk">HOW EACH TYPE OPERATES — STEP BY STEP</h4>
+  <p class="lead">These flows show the <i>behaviour</i> of each malware type so you know exactly which stage your defenses interrupt. They are conceptual maps for defenders, not build instructions.</p>
+
+  <figure>
+    <svg viewBox="0 0 720 130" role="img" aria-label="Virus operation steps">
+      <text x="360" y="18" text-anchor="middle" class="svg-label-g">VIRUS — rides a file you trust</text>
+      <g fill="none" stroke-width="1.5">
+        <rect x="16" y="44" width="150" height="56" stroke="#00ff41"/><rect x="196" y="44" width="150" height="56" stroke="#00ff41"/><rect x="376" y="44" width="150" height="56" stroke="#ffb000"/><rect x="556" y="44" width="148" height="56" stroke="#ff2b3d"/>
+      </g>
+      <g class="svg-small" fill="#5f8f68"><text x="24" y="60">1</text><text x="204" y="60">2</text><text x="384" y="60">3</text><text x="564" y="60">4</text></g>
+      <text x="91" y="72" text-anchor="middle" class="svg-label-g">ATTACH</text><text x="91" y="90" text-anchor="middle" class="svg-small">code added to clean file</text>
+      <text x="271" y="72" text-anchor="middle" class="svg-label-g">EXECUTE</text><text x="271" y="90" text-anchor="middle" class="svg-small">host opened → virus runs</text>
+      <text x="451" y="72" text-anchor="middle" class="svg-label">REPLICATE</text><text x="451" y="90" text-anchor="middle" class="svg-small">copies into more files</text>
+      <text x="630" y="72" text-anchor="middle" class="svg-label-r">PAYLOAD</text><text x="630" y="90" text-anchor="middle" class="svg-small">corrupt / delete on trigger</text>
+      <g stroke-width="2" class="flow-dash"><line x1="166" y1="72" x2="196" y2="72" stroke="#00ff41"/><line x1="346" y1="72" x2="376" y2="72" stroke="#00ff41"/><line x1="526" y1="72" x2="556" y2="72" stroke="#ffb000"/></g>
+    </svg>
+    <figcaption>FIG 1.1 — Virus lifecycle. Defense bites at step 2: don't run untrusted files.</figcaption>
+  </figure>
+
+  <figure>
+    <svg viewBox="0 0 720 130" role="img" aria-label="Worm operation steps">
+      <text x="360" y="18" text-anchor="middle" class="svg-label-g">WORM — spreads itself, no click needed</text>
+      <g fill="none" stroke-width="1.5">
+        <rect x="16" y="44" width="150" height="56" stroke="#00ff41"/><rect x="196" y="44" width="150" height="56" stroke="#ffb000"/><rect x="376" y="44" width="150" height="56" stroke="#ffb000"/><rect x="556" y="44" width="148" height="56" stroke="#ff2b3d"/>
+      </g>
+      <g class="svg-small" fill="#5f8f68"><text x="24" y="60">1</text><text x="204" y="60">2</text><text x="384" y="60">3</text><text x="564" y="60">4</text></g>
+      <text x="91" y="72" text-anchor="middle" class="svg-label-g">SCAN</text><text x="91" y="90" text-anchor="middle" class="svg-small">find vulnerable hosts</text>
+      <text x="271" y="72" text-anchor="middle" class="svg-label">EXPLOIT</text><text x="271" y="90" text-anchor="middle" class="svg-small">unpatched service</text>
+      <text x="451" y="72" text-anchor="middle" class="svg-label">COPY</text><text x="451" y="90" text-anchor="middle" class="svg-small">self to new host</text>
+      <text x="630" y="72" text-anchor="middle" class="svg-label-r">REPEAT</text><text x="630" y="90" text-anchor="middle" class="svg-small">exponential spread</text>
+      <g stroke-width="2" class="flow-dash"><line x1="166" y1="72" x2="196" y2="72" stroke="#00ff41"/><line x1="346" y1="72" x2="376" y2="72" stroke="#ffb000"/><line x1="526" y1="72" x2="556" y2="72" stroke="#ffb000"/></g>
+      <path d="M630 100 C630 118 91 118 91 100" fill="none" stroke="#ff2b3d" stroke-width="1" stroke-dasharray="4 4"/>
+    </svg>
+    <figcaption>FIG 1.2 — Worm loop. Defense bites at step 2: patch fast, segment, firewall.</figcaption>
+  </figure>
+
+  <figure>
+    <svg viewBox="0 0 720 130" role="img" aria-label="Ransomware operation steps">
+      <text x="360" y="18" text-anchor="middle" class="svg-label-g">RANSOMWARE — turns encryption against you</text>
+      <g fill="none" stroke-width="1.5">
+        <rect x="16" y="44" width="150" height="56" stroke="#00ff41"/><rect x="196" y="44" width="150" height="56" stroke="#ff2b3d"/><rect x="376" y="44" width="150" height="56" stroke="#ff2b3d"/><rect x="556" y="44" width="148" height="56" stroke="#ff2b3d"/>
+      </g>
+      <g class="svg-small" fill="#5f8f68"><text x="24" y="60">1</text><text x="204" y="60">2</text><text x="384" y="60">3</text><text x="564" y="60">4</text></g>
+      <text x="91" y="72" text-anchor="middle" class="svg-label-g">BREACH</text><text x="91" y="90" text-anchor="middle" class="svg-small">phish / exploit entry</text>
+      <text x="271" y="72" text-anchor="middle" class="svg-label-r">ENCRYPT</text><text x="271" y="90" text-anchor="middle" class="svg-small">files locked w/ their key</text>
+      <text x="451" y="72" text-anchor="middle" class="svg-label-r">KILL BACKUPS</text><text x="451" y="90" text-anchor="middle" class="svg-small">+ steal a copy</text>
+      <text x="630" y="72" text-anchor="middle" class="svg-label-r">RANSOM</text><text x="630" y="90" text-anchor="middle" class="svg-small">pay-or-lose note</text>
+      <g stroke-width="2" class="flow-dash"><line x1="166" y1="72" x2="196" y2="72" stroke="#00ff41"/><line x1="346" y1="72" x2="376" y2="72" stroke="#ff2b3d"/><line x1="526" y1="72" x2="556" y2="72" stroke="#ff2b3d"/></g>
+    </svg>
+    <figcaption>FIG 1.3 — Ransomware chain. Offline backups (step 3 defence) make step 4 powerless.</figcaption>
+  </figure>
+
+  <figure>
+    <svg viewBox="0 0 720 130" role="img" aria-label="Keylogger spyware operation steps">
+      <text x="360" y="18" text-anchor="middle" class="svg-label-g">SPYWARE / KEYLOGGER — silent surveillance</text>
+      <g fill="none" stroke-width="1.5">
+        <rect x="16" y="44" width="150" height="56" stroke="#00ff41"/><rect x="196" y="44" width="150" height="56" stroke="#ffb000"/><rect x="376" y="44" width="150" height="56" stroke="#ffb000"/><rect x="556" y="44" width="148" height="56" stroke="#ff2b3d"/>
+      </g>
+      <g class="svg-small" fill="#5f8f68"><text x="24" y="60">1</text><text x="204" y="60">2</text><text x="384" y="60">3</text><text x="564" y="60">4</text></g>
+      <text x="91" y="72" text-anchor="middle" class="svg-label-g">IMPLANT</text><text x="91" y="90" text-anchor="middle" class="svg-small">runs at your privilege</text>
+      <text x="271" y="72" text-anchor="middle" class="svg-label">HOOK</text><text x="271" y="90" text-anchor="middle" class="svg-small">capture keys / screen</text>
+      <text x="451" y="72" text-anchor="middle" class="svg-label">LOG</text><text x="451" y="90" text-anchor="middle" class="svg-small">passwords, messages</text>
+      <text x="630" y="72" text-anchor="middle" class="svg-label-r">EXFIL</text><text x="630" y="90" text-anchor="middle" class="svg-small">send to C2 server</text>
+      <g stroke-width="2" class="flow-dash"><line x1="166" y1="72" x2="196" y2="72" stroke="#00ff41"/><line x1="346" y1="72" x2="376" y2="72" stroke="#ffb000"/><line x1="526" y1="72" x2="556" y2="72" stroke="#ff2b3d"/></g>
+    </svg>
+    <figcaption>FIG 1.4 — Spyware flow. MFA + password-manager autofill blunt the value of step 4.</figcaption>
+  </figure>
+
+  <figure>
+    <svg viewBox="0 0 720 130" role="img" aria-label="Botnet operation steps">
+      <text x="360" y="18" text-anchor="middle" class="svg-label-g">BOTNET — your device becomes a soldier</text>
+      <g fill="none" stroke-width="1.5">
+        <rect x="16" y="44" width="150" height="56" stroke="#00ff41"/><rect x="196" y="44" width="150" height="56" stroke="#ffb000"/><rect x="376" y="44" width="150" height="56" stroke="#ffb000"/><rect x="556" y="44" width="148" height="56" stroke="#ff2b3d"/>
+      </g>
+      <g class="svg-small" fill="#5f8f68"><text x="24" y="60">1</text><text x="204" y="60">2</text><text x="384" y="60">3</text><text x="564" y="60">4</text></g>
+      <text x="91" y="72" text-anchor="middle" class="svg-label-g">INFECT</text><text x="91" y="90" text-anchor="middle" class="svg-small">often via default password</text>
+      <text x="271" y="72" text-anchor="middle" class="svg-label">CALL HOME</text><text x="271" y="90" text-anchor="middle" class="svg-small">connect to C2</text>
+      <text x="451" y="72" text-anchor="middle" class="svg-label">AWAIT</text><text x="451" y="90" text-anchor="middle" class="svg-small">listen for orders</text>
+      <text x="630" y="72" text-anchor="middle" class="svg-label-r">ATTACK</text><text x="630" y="90" text-anchor="middle" class="svg-small">DDoS / spam / mine</text>
+      <g stroke-width="2" class="flow-dash"><line x1="166" y1="72" x2="196" y2="72" stroke="#00ff41"/><line x1="346" y1="72" x2="376" y2="72" stroke="#ffb000"/><line x1="526" y1="72" x2="556" y2="72" stroke="#ff2b3d"/></g>
+    </svg>
+    <figcaption>FIG 1.5 — Botnet flow. Changing default passwords (step 1 defence) keeps you out of the army.</figcaption>
+  </figure>
+</section>
+
+<!-- ================= 02 MALWARE HISTORY ================= -->
+<section id="history">
+  <div class="sec-head"><span class="sec-num">02</span><span class="sec-title">MALWARE · ORIGINS &amp; HISTORY</span></div>
+  <p class="sec-intro">Malware didn't start as crime — it started as curiosity. The story runs from harmless lab experiments, to teenage pranks, to organized crime, to nation-state cyber-weapons. Knowing <b style="color:var(--amber)">who</b> built the famous ones and <b style="color:var(--amber)">why</b> reveals how motives escalated from "can this be done?" to "this can wreck a country."</p>
+
+  <figure>
+    <svg viewBox="0 0 720 150" role="img" aria-label="Malware era timeline">
+      <line x1="30" y1="90" x2="690" y2="90" stroke="#0d5a24" stroke-width="2"/>
+      <circle cx="90" cy="90" r="6" fill="#00ff41"/><text x="90" y="72" text-anchor="middle" class="svg-small">1971</text><text x="90" y="118" text-anchor="middle" class="svg-label-g">EXPERIMENTS</text>
+      <circle cx="250" cy="90" r="6" fill="#00ff41"/><text x="250" y="72" text-anchor="middle" class="svg-small">1982-2004</text><text x="250" y="118" text-anchor="middle" class="svg-label-g">PRANKS &amp; FAME</text>
+      <circle cx="430" cy="90" r="6" fill="#ffb000"/><text x="430" y="72" text-anchor="middle" class="svg-small">2005-2013</text><text x="430" y="118" text-anchor="middle" class="svg-label">ORGANIZED CRIME</text>
+      <circle cx="640" cy="90" r="6" fill="#ff2b3d"/><text x="640" y="72" text-anchor="middle" class="svg-small">2010-now</text><text x="640" y="118" text-anchor="middle" class="svg-label-r">CYBER-WEAPONS</text>
+      <text x="360" y="30" text-anchor="middle" class="svg-label-g">FOUR ERAS OF MALWARE — motives escalate left → right</text>
+    </svg>
+    <figcaption>FIG 2.0 — the four eras: curiosity → notoriety → profit → geopolitics.</figcaption>
+  </figure>
+
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-year">1971</div><div class="tl-name">CREEPER — the first self-replicating program</div>
+      <p>Written by <b>Bob Thomas</b> at BBN as an experiment on ARPANET (the early internet). It hopped between machines printing "I'm the creeper, catch me if you can." It was harmless. A follow-up program, <b>Reaper</b>, was written to chase and delete it — arguably the first "antivirus."</p>
+      <span class="tl-who">WHO: Bob Thomas (BBN)</span><span class="tl-who">WHY: research / proof of concept</span></div>
+
+    <div class="tl-item"><div class="tl-year">1982</div><div class="tl-name">ELK CLONER — first virus "in the wild"</div>
+      <p>Coded by <b>Rich Skrenta</b>, a 15-year-old, as a prank for the Apple II. It spread via floppy disks and displayed a little poem every 50th boot. Annoying, not destructive — but the first virus to escape a lab and spread among real users.</p>
+      <span class="tl-who">WHO: Rich Skrenta, age 15</span><span class="tl-who">WHY: prank</span></div>
+
+    <div class="tl-item"><div class="tl-year">1986</div><div class="tl-name">BRAIN — first PC virus</div>
+      <p>Written by brothers <b>Basit and Amjad Farooq Alvi</b> in Lahore, Pakistan, who ran a computer shop. They say they built it to track illegal copying of medical software they'd written. It even contained their real names, address, and phone number. It became the first virus for the IBM PC.</p>
+      <span class="tl-who">WHO: the Alvi brothers</span><span class="tl-who">WHY: anti-piracy tracking</span></div>
+
+    <div class="tl-item red"><div class="tl-year">1988</div><div class="tl-name">THE MORRIS WORM — the internet's first big outage</div>
+      <p><b>Robert Tappan Morris</b>, a Cornell grad student, released a worm meant (he said) to measure the size of the internet. A bug made it re-infect machines over and over, crashing thousands of computers — roughly 10% of the internet at the time. He became the first person convicted under the U.S. Computer Fraud and Abuse Act, and later became an MIT professor.</p>
+      <span class="tl-who">WHO: Robert T. Morris</span><span class="tl-who">WHY: curiosity → accidental damage</span></div>
+
+    <div class="tl-item red"><div class="tl-year">2000</div><div class="tl-name">ILOVEYOU — the love-letter worm</div>
+      <p><b>Onel de Guzman</b>, a student in the Philippines, unleashed a worm that arrived as an email with the subject "ILOVEYOU" and a fake love-letter attachment. Opening it overwrote files and mailed itself to everyone in your address book. He later said he wanted to steal passwords for free internet access. It hit tens of millions of machines; the Philippines had no cybercrime law yet, so charges were dropped.</p>
+      <span class="tl-who">WHO: Onel de Guzman</span><span class="tl-who">WHY: steal internet passwords</span></div>
+
+    <div class="tl-item red"><div class="tl-year">2004</div><div class="tl-name">MYDOOM &amp; SASSER — the record-breakers</div>
+      <p><b>Mydoom</b> became the fastest-spreading email worm ever recorded, still often cited as the costliest in history (rough estimates near $38B). Its author was never confirmed. The same year, German teenager <b>Sven Jaschan</b> (17) wrote <b>Sasser</b> and <b>Netsky</b>, worms that exploited a Windows flaw to spread with no user action; a Microsoft bounty led to his arrest.</p>
+      <span class="tl-who">WHO: Mydoom — unknown · Sasser — Sven Jaschan (17)</span><span class="tl-who">WHY: disruption / notoriety</span></div>
+
+    <div class="tl-item red"><div class="tl-year">2007</div><div class="tl-name">ZEUS — malware becomes a business</div>
+      <p>A banking trojan built to steal online-banking logins at massive scale. Zeus was sold and rented in criminal markets, spawning countless variants and a whole underground economy. This marks the shift from fame-seeking to <b>professional, for-profit cybercrime</b>.</p>
+      <span class="tl-who">WHO: organized cybercrime</span><span class="tl-who">WHY: money — bank fraud</span></div>
+
+    <div class="tl-item red"><div class="tl-year">2010</div><div class="tl-name">STUXNET — the first cyber-weapon</div>
+      <p>A staggeringly complex worm widely attributed to a joint U.S.–Israel operation. It targeted the specific Siemens industrial controllers running Iran's Natanz uranium centrifuges and made them tear themselves apart while reporting "all normal" to operators. Stuxnet is the first known malware to cause real-world <b>physical destruction</b>, using several previously-unknown "zero-day" exploits.</p>
+      <span class="tl-who">WHO: attributed to nation-states</span><span class="tl-who">WHY: sabotage a nuclear program</span></div>
+
+    <div class="tl-item red"><div class="tl-year">2013</div><div class="tl-name">CRYPTOLOCKER — the ransomware boom</div>
+      <p>Popularized the modern crypto-ransomware model: strong encryption plus anonymous cryptocurrency payment. Its "success" spawned an entire ransomware industry, later evolving into "ransomware-as-a-service" rented to affiliates.</p>
+      <span class="tl-who">WHO: organized cybercrime</span><span class="tl-who">WHY: extortion for profit</span></div>
+
+    <div class="tl-item red"><div class="tl-year">2016</div><div class="tl-name">MIRAI — the internet-of-things army</div>
+      <p>Written by three college-age friends (<b>Paras Jha, Josiah White, Dalton Norman</b>), Mirai hijacked cheap IoT devices — cameras, routers, DVRs — that still used factory-default passwords. It started as a scheme to attack Minecraft servers, then took down the DNS provider Dyn in October 2016, knocking Twitter, Netflix, Reddit and others offline. They published the source code, so copycats spread everywhere. All three pleaded guilty.</p>
+      <span class="tl-who">WHO: Jha, White, Norman</span><span class="tl-who">WHY: DDoS-for-hire / gaming rivalry</span></div>
+
+    <div class="tl-item red"><div class="tl-year">2017</div><div class="tl-name">WANNACRY &amp; NOTPETYA — weapons go global</div>
+      <p><b>WannaCry</b> was a ransomware worm (attributed to North Korea) that spread using <b>EternalBlue</b>, a Windows exploit leaked from a stolen NSA toolkit. It crippled hospitals, telecoms and factories across 150+ countries until a researcher found an accidental "kill switch."<br><br><b>NotPetya</b> (attributed to Russian military hackers) looked like ransomware but was really a <b>wiper</b>, spread by hijacking a Ukrainian tax-software update. It caused an estimated $10B in damage worldwide — often called the most destructive cyberattack in history.</p>
+      <span class="tl-who">WHO: attributed to nation-states</span><span class="tl-who">WHY: disruption / geopolitics</span></div>
+  </div>
+
+  <h4 class="blk">CHART: estimated global damage of infamous malware</h4>
+  <p class="lead" style="margin-bottom:10px">Dollar figures for malware are notoriously rough — they blend cleanup, downtime and lost productivity, and estimates vary widely between sources. Treat the bars below as orders of magnitude, not precise accounting.</p>
+  <figure>
+    <svg viewBox="0 0 720 320" role="img" aria-label="Bar chart of estimated malware damage in billions USD">
+      <line x1="150" y1="20" x2="150" y2="290" stroke="#0d5a24" stroke-width="1.5"/>
+      <line x1="150" y1="290" x2="700" y2="290" stroke="#0d5a24" stroke-width="1.5"/>
+      <g class="svg-small" fill="#5f8f68">
+        <text x="150" y="305" text-anchor="middle">0</text>
+        <text x="285" y="305" text-anchor="middle">10</text>
+        <text x="420" y="305" text-anchor="middle">20</text>
+        <text x="555" y="305" text-anchor="middle">30</text>
+        <text x="690" y="305" text-anchor="middle">40</text>
+        <text x="420" y="318" text-anchor="middle" fill="#5f8f68">estimated damage — USD billions</text>
+      </g>
+      <rect x="150" y="34" width="513" height="26" fill="#ff2b3d" opacity="0.85"/><text x="145" y="52" text-anchor="end" class="svg-label">Mydoom</text><text x="668" y="52" class="svg-small">~$38B</text>
+      <rect x="150" y="78" width="202" height="26" fill="#ff5a3c" opacity="0.85"/><text x="145" y="96" text-anchor="end" class="svg-label">ILOVEYOU</text><text x="357" y="96" class="svg-small">~$15B</text>
+      <rect x="150" y="122" width="135" height="26" fill="#ffb000" opacity="0.85"/><text x="145" y="140" text-anchor="end" class="svg-label">NotPetya</text><text x="290" y="140" class="svg-small">~$10B</text>
+      <rect x="150" y="166" width="121" height="26" fill="#ffb000" opacity="0.7"/><text x="145" y="184" text-anchor="end" class="svg-label">Conficker</text><text x="276" y="184" class="svg-small">~$9B</text>
+      <rect x="150" y="210" width="54" height="26" fill="#00b32c" opacity="0.9"/><text x="145" y="228" text-anchor="end" class="svg-label">WannaCry</text><text x="209" y="228" class="svg-small">~$4B</text>
+      <rect x="150" y="254" width="18" height="26" fill="#00b32c" opacity="0.7"/><text x="145" y="272" text-anchor="end" class="svg-label">SQL Slammer</text><text x="173" y="272" class="svg-small">~$1B</text>
+    </svg>
+    <figcaption>FIG 2.1 — rough estimated global damage (USD). Figures vary widely by source; shown for scale only.</figcaption>
+  </figure>
+
+  <div class="note"><b>THE PATTERN:</b> notice the motive drift — curiosity (1971) → showing off (1982-2004) → money (2005+) → statecraft (2010+). Defenders win by making each stage harder: patch to kill worms, back up to kill ransomware, verify updates to kill supply-chain attacks.</div>
+</section>
+
+<!-- ================= 03 PROTECT ================= -->
+<section id="protect">
+  <div class="sec-head"><span class="sec-num">03</span><span class="sec-title">PROTECT · ANTI-MALWARE PLAYBOOK</span></div>
+  <p class="sec-intro">No single tool stops malware. Real protection is <b style="color:var(--green)">defense in depth</b> — layers, so that when one fails the next still catches the attack. Below: the universal layers, then a targeted counter for <i>each</i> malware type from section 01.</p>
+
+  <figure>
+    <svg viewBox="0 0 460 460" role="img" aria-label="Defense in depth layered rings">
+      <circle cx="230" cy="230" r="215" fill="none" stroke="#0d5a24" stroke-width="1.5"/>
+      <circle cx="230" cy="230" r="170" fill="none" stroke="#00b32c" stroke-width="1.5"/>
+      <circle cx="230" cy="230" r="125" fill="none" stroke="#00ff41" stroke-width="1.5"/>
+      <circle cx="230" cy="230" r="80" fill="none" stroke="#00ff41" stroke-width="1.5"/>
+      <circle cx="230" cy="230" r="36" fill="rgba(0,255,65,0.12)" stroke="#00ff41" stroke-width="2"/>
+      <text x="230" y="228" text-anchor="middle" class="svg-label-g">YOUR</text>
+      <text x="230" y="244" text-anchor="middle" class="svg-label-g">DATA</text>
+      <text x="230" y="120" text-anchor="middle" class="svg-label-g">BACKUPS</text>
+      <text x="230" y="165" text-anchor="middle" class="svg-label-g">LEAST PRIVILEGE</text>
+      <text x="230" y="330" text-anchor="middle" class="svg-label-g">PATCHING</text>
+      <text x="230" y="380" text-anchor="middle" class="svg-label">MFA · PASSWORD MANAGER</text>
+      <text x="230" y="425" text-anchor="middle" class="svg-small">FIREWALL · EDR · AD-BLOCK · USER AWARENESS (outer wall)</text>
+      <text x="230" y="30" text-anchor="middle" class="svg-label-g">DEFENSE IN DEPTH</text>
+    </svg>
+    <figcaption>FIG 3.0 — layers, from the outer wall to your data core. An attacker must beat all of them.</figcaption>
+  </figure>
+
+  <h4 class="blk">THE 10 UNIVERSAL LAYERS</h4>
+  <ul class="check">
+    <li><b style="color:var(--green)">Update everything, automatically.</b> OS, browser, apps, routers, IoT. Most malware exploits bugs that already have a fix — patching is the single highest-value habit.</li>
+    <li><b style="color:var(--green)">Run as a standard user, not admin/root.</b> Least privilege limits what any malware can do the moment it runs.</li>
+    <li><b style="color:var(--green)">Keep offline, versioned backups (3-2-1 rule).</b> 3 copies, 2 media, 1 off-site/offline. This is the only guaranteed cure for ransomware and wipers.</li>
+    <li><b style="color:var(--green)">Use reputable anti-malware / EDR</b> that watches <i>behavior</i>, not just known file signatures — that's what catches fileless and new threats.</li>
+    <li><b style="color:var(--green)">Enable a firewall</b> and close ports/services you don't use. Fewer open doors = fewer worm targets.</li>
+    <li><b style="color:var(--green)">Turn on MFA everywhere</b> and use a password manager with unique passwords. Even if malware steals a password, MFA blocks the login.</li>
+    <li><b style="color:var(--green)">Only install from trusted sources;</b> verify signatures/hashes. No cracked software, no random "codec" downloads.</li>
+    <li><b style="color:var(--green)">Disable Office macros by default;</b> don't enable "content" in documents from email.</li>
+    <li><b style="color:var(--green)">Block ads/trackers &amp; suspicious sites;</b> a lot of malware arrives through malicious ads ("malvertising").</li>
+    <li><b style="color:var(--green)">Slow down on urgency.</b> "Act now or lose access" is the fingerprint of social engineering. Verify before you click.</li>
+  </ul>
+
+  <h4 class="blk">TARGETED COUNTERS — ONE PER MALWARE TYPE</h4>
+  <div class="grid">
+    <div class="card"><h3>vs VIRUS</h3><ul class="tips"><li>Never run untrusted executables or macros.</li><li>Show file extensions; beware <code>.exe/.scr/.js</code> in disguise.</li><li>On-access antivirus scanning enabled.</li></ul></div>
+    <div class="card"><h3>vs WORM</h3><ul class="tips"><li>Patch network-facing services fast.</li><li>Segment networks; isolate IoT and guests.</li><li>Firewall off unused ports/SMB.</li></ul></div>
+    <div class="card"><h3>vs TROJAN</h3><ul class="tips"><li>Official app stores / vendor sites only.</li><li>Verify code signatures and hashes.</li><li>Never "crack" paid software.</li></ul></div>
+    <div class="card"><h3>vs RANSOMWARE</h3><ul class="tips"><li>Offline, versioned, tested backups.</li><li>Least privilege + rapid patching.</li><li>Block macros &amp; malicious email attachments.</li></ul></div>
+    <div class="card"><h3>vs SPYWARE / KEYLOGGER</h3><ul class="tips"><li>MFA so stolen creds are useless.</li><li>Password manager autofill beats key-logging.</li><li>Review app permissions; cover camera/mic.</li></ul></div>
+    <div class="card"><h3>vs ROOTKIT / BOOTKIT</h3><ul class="tips"><li>Secure Boot + signed drivers only.</li><li>Keep firmware/UEFI updated.</li><li>If confirmed: wipe and reimage from clean media.</li></ul></div>
+    <div class="card"><h3>vs BOTNET AGENT</h3><ul class="tips"><li>Change ALL default passwords (routers/IoT).</li><li>Monitor outbound traffic for odd calls home.</li><li>Keep firmware current; disable UPnP if unused.</li></ul></div>
+    <div class="card"><h3>vs FILELESS</h3><ul class="tips"><li>Behavior-based EDR, not signatures alone.</li><li>Restrict &amp; log PowerShell/scripting.</li><li>Least privilege blocks escalation.</li></ul></div>
+    <div class="card"><h3>vs ADWARE / PUP</h3><ul class="tips"><li>Custom install; untick bundled "extras."</li><li>Audit and remove browser extensions.</li><li>Reputable ad/tracker blocker.</li></ul></div>
+    <div class="card"><h3>vs WIPER</h3><ul class="tips"><li>Immutable, offline backups (assume no recovery).</li><li>Segment so one host can't reach everything.</li><li>Rehearsed incident-response &amp; restore plan.</li></ul></div>
+  </div>
+
+  <div class="note"><b>IF YOU'RE ALREADY INFECTED:</b> disconnect from the network, don't pay ransoms blindly, preserve evidence, wipe and reimage from known-clean media, rotate every password from a <i>clean</i> device, and re-enable MFA. For anything serious, involve professionals / law enforcement rather than "cleaning" a compromised machine.</div>
+</section>
+
+<!-- ================= 04 PHONE ================= -->
+<section id="phone">
+  <div class="sec-head"><span class="sec-num">04</span><span class="sec-title">PHONE · MOBILE THREATS</span></div>
+  <p class="sec-intro">Your phone is a wallet, a key, a camera, and a tracking beacon in one. Mobile attacks mostly abuse two things: <b style="color:var(--amber)">permissions you grant too fast</b>, and <b style="color:var(--amber)">trust in messages that look official.</b> Phones are also harder to inspect than PCs, so bad apps hide longer.</p>
+
+  <figure>
+    <svg viewBox="0 0 720 210" role="img" aria-label="Phishing message anatomy diagram">
+      <rect x="30" y="30" width="300" height="150" rx="10" fill="rgba(8,20,10,0.85)" stroke="#00b32c" stroke-width="1.5"/>
+      <text x="50" y="60" class="svg-label-r">⚠ URGENT: parcel held</text>
+      <text x="50" y="86" class="svg-small">"Your package is stopped. Pay the</text>
+      <text x="50" y="102" class="svg-small">£1.99 fee within 24h or it returns."</text>
+      <text x="50" y="132" class="svg-label-c">http://p0st-track.info/pay</text>
+      <text x="50" y="160" class="svg-small">from: +44 7xxx (unknown)</text>
+      <line x1="330" y1="52" x2="470" y2="45" stroke="#ffb000" stroke-width="1"/><text x="478" y="49" class="svg-label">1. urgency + fear</text>
+      <line x1="330" y1="94" x2="470" y2="95" stroke="#ffb000" stroke-width="1"/><text x="478" y="99" class="svg-label">2. tiny "fee" → card theft</text>
+      <line x1="330" y1="130" x2="470" y2="135" stroke="#ffb000" stroke-width="1"/><text x="478" y="139" class="svg-label">3. lookalike / shortened link</text>
+      <line x1="330" y1="160" x2="470" y2="172" stroke="#ffb000" stroke-width="1"/><text x="478" y="176" class="svg-label">4. spoofable sender</text>
+      <text x="360" y="20" text-anchor="middle" class="svg-label-g">ANATOMY OF A SMISHING TEXT</text>
+    </svg>
+    <figcaption>FIG 4.0 — the four tells of a phishing/smishing message. Spot one, distrust all.</figcaption>
+  </figure>
+
+  <div class="grid">
+    <div class="card danger"><h3>MALICIOUS / OVER-PERMISSIONED APPS</h3><div class="kind">sideloading &amp; permissions</div>
+      <p>A flashlight app that wants your contacts, mic, and location. Sideloaded APKs and fake "mod" apps can carry anything.</p>
+      <div class="why"><b>WHY IT WORKS:</b> People tap "Allow" on autopilot. Once granted, the permission is legitimate — the OS now lets the app do exactly what you approved.</div>
+      <div class="fix"><b>DEFENSE:</b> Install from official stores; read permissions ("does a flashlight need my contacts?"); revoke unused permissions; prefer apps with clear privacy info.</div></div>
+
+    <div class="card danger"><h3>SMISHING &amp; VISHING</h3><div class="kind">social engineering</div>
+      <p>Phishing by SMS ("parcel held — pay here") or voice call ("this is your bank's fraud team"). A fake link or a panicked call harvests logins, codes, or card details.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Sender IDs and caller IDs are easy to spoof, screens show short links, and urgency switches off skepticism.</div>
+      <div class="fix"><b>DEFENSE:</b> Never tap links or read codes to callers. Hang up and dial the number on the back of your card. Open the real app yourself.</div></div>
+
+    <div class="card danger"><h3>ROGUE / PUBLIC WI-FI</h3><div class="kind">network trust</div>
+      <p>"Free_Airport_WiFi" run by an attacker can watch or redirect your traffic.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Devices auto-join familiar names, and traffic that isn't encrypted is readable by whoever runs the access point.</div>
+      <div class="fix"><b>DEFENSE:</b> Rely on HTTPS (default now), use a trusted VPN on public Wi-Fi, and turn off auto-join for open networks.</div></div>
+
+    <div class="card danger"><h3>SIM SWAPPING</h3><div class="kind">account takeover</div>
+      <p>An attacker convinces your carrier to move your number to their SIM, then intercepts your SMS 2FA codes and password resets.</p>
+      <div class="why"><b>WHY IT WORKS:</b> SMS 2FA assumes "your number = you," and carrier support staff can be socially engineered into porting it.</div>
+      <div class="fix"><b>DEFENSE:</b> Use app-based or hardware 2FA instead of SMS; set a carrier port-out PIN; don't post your number publicly.</div></div>
+
+    <div class="card danger"><h3>OUTDATED OS &amp; ZERO-CLICK</h3><div class="kind">unpatched exploits</div>
+      <p>Old phone software has publicly-known holes. The worst — "zero-click" spyware like commercial surveillance kits — can infect a phone with no tap at all via a crafted message.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Once a patch ships, the bug it fixed is public. Unpatched phones are documented open doors; high-end spyware buys unknown ones.</div>
+      <div class="fix"><b>DEFENSE:</b> Auto-update; buy phones with long support windows; enable "Lockdown"-style hardened modes if you're high-risk; retire unsupported devices.</div></div>
+
+    <div class="card danger"><h3>MALICIOUS QR / BLUETOOTH / NFC</h3><div class="kind">proximity vectors</div>
+      <p>A QR code sends you to a phishing page ("quishing"); open Bluetooth/NFC can be probed by nearby attackers.</p>
+      <div class="why"><b>WHY IT WORKS:</b> You can't read a QR with your eyes, so you trust wherever it points; radios left discoverable advertise themselves.</div>
+      <div class="fix"><b>DEFENSE:</b> Preview QR URLs before opening; don't scan random codes; keep Bluetooth/NFC off or non-discoverable when unused.</div></div>
+  </div>
+</section>
+
+<!-- ================= 05 NETWORK ================= -->
+<section id="network">
+  <div class="sec-head"><span class="sec-num">05</span><span class="sec-title">NETWORK ATTACKS</span></div>
+  <p class="sec-intro">Networks were built for connectivity first and security second. Many core protocols simply <b style="color:var(--amber)">trust whoever speaks the right message</b> — with no proof of identity. Attackers slip into that gap to listen, redirect, or impersonate.</p>
+
+  <figure>
+    <svg viewBox="0 0 720 260" role="img" aria-label="Man in the middle attack diagram">
+      <rect x="30" y="110" width="120" height="60" fill="none" stroke="#00ff41" stroke-width="1.5"/>
+      <text x="90" y="145" text-anchor="middle" class="svg-label-g">YOU</text>
+      <rect x="300" y="30" width="120" height="60" fill="none" stroke="#ff2b3d" stroke-width="1.5"/>
+      <text x="360" y="58" text-anchor="middle" class="svg-label-r">ATTACKER</text>
+      <text x="360" y="76" text-anchor="middle" class="svg-small">in the middle</text>
+      <rect x="570" y="110" width="120" height="60" fill="none" stroke="#00ff41" stroke-width="1.5"/>
+      <text x="630" y="145" text-anchor="middle" class="svg-label-g">SERVER</text>
+      <line x1="150" y1="140" x2="570" y2="140" stroke="#0d5a24" stroke-width="1.5" stroke-dasharray="4 5"/>
+      <text x="360" y="158" text-anchor="middle" class="svg-small">what you THINK happens →</text>
+      <line x1="150" y1="135" x2="300" y2="75" stroke="#ff2b3d" stroke-width="2" class="flow-dash"/>
+      <line x1="420" y1="75" x2="570" y2="135" stroke="#ff2b3d" stroke-width="2" class="flow-dash"/>
+      <polygon points="300,75 292,72 296,82" fill="#ff2b3d"/>
+      <polygon points="570,135 562,127 560,137" fill="#ff2b3d"/>
+      <text x="360" y="215" text-anchor="middle" class="svg-label-r">reality: traffic detours through the attacker, who reads/alters it</text>
+    </svg>
+    <figcaption>FIG 5.0 — Man-in-the-Middle: the attacker relays your connection while spying on it.</figcaption>
+  </figure>
+
+  <div class="grid">
+    <div class="card danger"><h3>PACKET SNIFFING</h3><div class="kind">eavesdropping</div>
+      <p>Capturing raw traffic on a network to read anything sent in the clear.</p>
+      <div class="why"><b>WHY IT WORKS:</b> On shared/open networks data is broadcast, and unencrypted protocols (HTTP, plain DNS) expose credentials in plaintext.</div>
+      <div class="fix"><b>DEFENSE:</b> Encrypt everything — HTTPS/TLS, VPN, SSH. Sniffed ciphertext is useless without the key.</div></div>
+
+    <div class="card danger"><h3>MITM (MAN-IN-THE-MIDDLE)</h3><div class="kind">interception</div>
+      <p>Attacker sits between you and the destination, relaying and reading (or altering) traffic.</p>
+      <div class="why"><b>WHY IT WORKS:</b> If nothing verifies who you're really talking to, an interceptor can impersonate both sides at once.</div>
+      <div class="fix"><b>DEFENSE:</b> Valid TLS certificates + heed browser warnings; certificate pinning; never click through "connection not private."</div></div>
+
+    <div class="card danger"><h3>ARP SPOOFING</h3><div class="kind">LAN poisoning</div>
+      <p>Attacker lies about which hardware address owns an IP, so local traffic flows through them.</p>
+      <div class="why"><b>WHY IT WORKS:</b> ARP has no authentication — devices simply believe the last "I'm the router" reply they hear.</div>
+      <div class="fix"><b>DEFENSE:</b> Dynamic ARP Inspection on switches, static ARP for critical hosts, and encryption so intercepted traffic is unreadable.</div></div>
+
+    <div class="card danger"><h3>DNS SPOOFING</h3><div class="kind">redirection</div>
+      <p>Feeds you a fake answer for a domain, sending "yourbank.com" to the attacker's server.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Classic DNS answers aren't signed, so a forged reply that arrives first is accepted as truth.</div>
+      <div class="fix"><b>DEFENSE:</b> DNSSEC, DNS-over-HTTPS/TLS, and HTTPS (the cert won't match the fake server, so you get warned).</div></div>
+
+    <div class="card danger"><h3>EVIL TWIN / ROGUE AP</h3><div class="kind">fake access point</div>
+      <p>A clone of a real Wi-Fi network with the same name and a stronger signal, luring devices to connect.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Wi-Fi picks networks by name (SSID), not identity; two networks can share a name and devices prefer the strongest.</div>
+      <div class="fix"><b>DEFENSE:</b> Verify networks, disable auto-join to open SSIDs, use enterprise Wi-Fi auth, VPN on anything untrusted.</div></div>
+
+    <div class="card danger"><h3>DEAUTH ATTACK</h3><div class="kind">denial of service</div>
+      <p>Forged "disconnect" frames kick devices off Wi-Fi — often to push them onto an evil twin.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Older Wi-Fi management frames were unauthenticated, so a spoofed deauth is obeyed instantly.</div>
+      <div class="fix"><b>DEFENSE:</b> WPA3 and 802.11w (Protected Management Frames) authenticate these frames and stop the attack.</div></div>
+
+    <div class="card danger"><h3>DDoS (BOTNET FLOOD)</h3><div class="kind">availability attack</div>
+      <p>Thousands of hijacked devices flood a target with traffic until it collapses — how Mirai took down major sites in 2016.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Any server has finite capacity; overwhelming scale from a botnet exhausts it faster than it can respond.</div>
+      <div class="fix"><b>DEFENSE:</b> DDoS-mitigation/CDN services, rate limiting, over-provisioning, and (as a device owner) not letting your gear join a botnet.</div></div>
+
+    <div class="card danger"><h3>PORT SCANNING / RECON</h3><div class="kind">pre-attack mapping</div>
+      <p>Probing which services a host exposes — the reconnaissance step before an exploit.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Every open, unneeded service is a possible way in, and many are left exposed by default.</div>
+      <div class="fix"><b>DEFENSE:</b> Close/firewall unused ports, expose only what's necessary, and monitor/alert on scanning activity.</div></div>
+  </div>
+
+  <figure>
+    <svg viewBox="0 0 720 210" role="img" aria-label="Botnet DDoS diagram">
+      <text x="360" y="22" text-anchor="middle" class="svg-label-g">BOTNET → DDoS (how Mirai worked)</text>
+      <circle cx="360" cy="60" r="18" fill="none" stroke="#ff2b3d" stroke-width="1.5"/><text x="360" y="64" text-anchor="middle" class="svg-label-r">C2</text>
+      <g stroke="#00b32c" stroke-width="1">
+        <line x1="120" y1="120" x2="360" y2="72"/><line x1="220" y1="120" x2="360" y2="72"/>
+        <line x1="320" y1="120" x2="360" y2="72"/><line x1="420" y1="120" x2="360" y2="72"/>
+        <line x1="520" y1="120" x2="360" y2="72"/><line x1="620" y1="120" x2="360" y2="72"/>
+      </g>
+      <g fill="none" stroke="#00ff41" stroke-width="1.5">
+        <rect x="105" y="120" width="30" height="24"/><rect x="205" y="120" width="30" height="24"/>
+        <rect x="305" y="120" width="30" height="24"/><rect x="405" y="120" width="30" height="24"/>
+        <rect x="505" y="120" width="30" height="24"/><rect x="605" y="120" width="30" height="24"/>
+      </g>
+      <text x="360" y="162" text-anchor="middle" class="svg-small">thousands of hijacked IoT devices (bots)</text>
+      <rect x="300" y="176" width="120" height="26" fill="none" stroke="#ff2b3d" stroke-width="1.5"/>
+      <text x="360" y="193" text-anchor="middle" class="svg-label-r">TARGET FLOODED</text>
+      <g stroke="#ff2b3d" stroke-width="1.5" class="flow-dash">
+        <line x1="120" y1="144" x2="330" y2="176"/><line x1="620" y1="144" x2="390" y2="176"/>
+        <line x1="360" y1="144" x2="360" y2="176"/>
+      </g>
+    </svg>
+    <figcaption>FIG 5.1 — a command-and-control (C2) server directs a botnet to bury a target in traffic.</figcaption>
+  </figure>
+</section>
+
+<!-- ================= 06 OWASP ================= -->
+<section id="owasp">
+  <div class="sec-head"><span class="sec-num">06</span><span class="sec-title">OWASP TOP 10 · WEB</span></div>
+  <p class="sec-intro">The OWASP Top 10 is the security industry's standard list of the most critical web-application risks, maintained by the non-profit Open Worldwide Application Security Project. Nearly every entry reduces to one sin: <b style="color:var(--amber)">trusting input, identity, or configuration that was never verified.</b></p>
+
+  <figure>
+    <svg viewBox="0 0 720 240" role="img" aria-label="SQL injection concept diagram">
+      <rect x="20" y="30" width="220" height="70" fill="none" stroke="#00ff41" stroke-width="1.5"/>
+      <text x="130" y="58" text-anchor="middle" class="svg-label-g">LOGIN FORM</text>
+      <text x="130" y="80" text-anchor="middle" class="svg-small">user types:  '  OR  1=1  --</text>
+      <rect x="20" y="140" width="220" height="70" fill="none" stroke="#ffb000" stroke-width="1.5"/>
+      <text x="130" y="168" text-anchor="middle" class="svg-label">APP builds query</text>
+      <text x="130" y="190" text-anchor="middle" class="svg-small">input glued into SQL text</text>
+      <rect x="470" y="85" width="230" height="70" fill="none" stroke="#ff2b3d" stroke-width="1.5"/>
+      <text x="585" y="113" text-anchor="middle" class="svg-label-r">DATABASE obeys</text>
+      <text x="585" y="135" text-anchor="middle" class="svg-small">"1=1" always true → login bypassed</text>
+      <line x1="130" y1="100" x2="130" y2="140" stroke="#ffb000" stroke-width="2" class="flow-dash"/>
+      <line x1="240" y1="175" x2="470" y2="120" stroke="#ff2b3d" stroke-width="2" class="flow-dash"/>
+      <polygon points="470,120 461,118 465,128" fill="#ff2b3d"/>
+      <text x="360" y="228" text-anchor="middle" class="svg-small">FIX: parameterized queries treat input as DATA, never as CODE</text>
+    </svg>
+    <figcaption>FIG 6.0 — Injection in one picture: the app mistakes attacker <i>input</i> for <i>instructions</i>.</figcaption>
+  </figure>
+
+  <div class="owasp">
+    <div class="owasp-row"><div class="owasp-id">A01</div><div><h4>BROKEN ACCESS CONTROL</h4>
+      <p>Users reach data or actions they shouldn't — e.g. changing <code>?id=123</code> to <code>?id=124</code> and seeing someone else's account. The #1 risk on the current list.</p>
+      <div class="why"><b>WHY IT WORKS:</b> The server renders a page but never re-checks "is THIS user allowed to touch THIS record?" It trusts the request.</div>
+      <div class="fix"><b>DEFENSE:</b> Enforce authorization server-side on every request; deny by default; never rely on hidden URLs or client-side checks.</div></div></div>
+
+    <div class="owasp-row"><div class="owasp-id">A02</div><div><h4>CRYPTOGRAPHIC FAILURES</h4>
+      <p>Sensitive data exposed through weak, missing, or misused encryption — plaintext passwords, outdated algorithms, no HTTPS.</p>
+      <div class="why"><b>WHY IT WORKS:</b> If data isn't properly protected in transit and at rest, one leak or one sniffer exposes everything readable.</div>
+      <div class="fix"><b>DEFENSE:</b> TLS everywhere, modern algorithms, hash passwords with bcrypt/argon2, and don't store data you don't need.</div></div></div>
+
+    <div class="owasp-row"><div class="owasp-id">A03</div><div><h4>INJECTION (SQL / COMMAND / XSS)</h4>
+      <p>Attacker input is interpreted as code — database queries, OS commands, or scripts running in other users' browsers (cross-site scripting).</p>
+      <div class="why"><b>WHY IT WORKS:</b> The app builds commands by gluing untrusted text into code, so the interpreter can't tell data from instructions.</div>
+      <div class="fix"><b>DEFENSE:</b> Parameterized queries/prepared statements, output encoding, strict input validation, and a Content-Security-Policy for XSS.</div></div></div>
+
+    <div class="owasp-row"><div class="owasp-id">A04</div><div><h4>INSECURE DESIGN</h4>
+      <p>The flaw is in the blueprint, not the code — e.g. a password reset with no rate limit, or checkout with no fraud checks.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Security was never designed in. No amount of clean code fixes a workflow that's insecure by concept.</div>
+      <div class="fix"><b>DEFENSE:</b> Threat-model early, define abuse cases, and build in rate limits and business-logic checks from the design stage.</div></div></div>
+
+    <div class="owasp-row"><div class="owasp-id">A05</div><div><h4>SECURITY MISCONFIGURATION</h4>
+      <p>Default passwords, verbose error pages, open cloud storage buckets, unnecessary features left switched on.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Defaults favor convenience over safety, and every extra enabled feature is another door nobody's watching.</div>
+      <div class="fix"><b>DEFENSE:</b> Harden by default, remove unused features, change all defaults, hide detailed errors, automate config review.</div></div></div>
+
+    <div class="owasp-row"><div class="owasp-id">A06</div><div><h4>VULNERABLE &amp; OUTDATED COMPONENTS</h4>
+      <p>Your app inherits the bugs of every library, framework, and plugin it uses — especially the un-updated ones.</p>
+      <div class="why"><b>WHY IT WORKS:</b> Known vulnerabilities in popular components are public and mass-scanned for. Old dependency = published exploit.</div>
+      <div class="fix"><b>DEFENSE:</b> Inventory dependencies, patch regularly, use software-composition-analysis scanners, remove unused libraries.</div></div></div>
+
+    <div class="owasp-row"><div class="owasp-id">A07</div><div><h4>IDENTIFICATION &amp; AUTH FAILURES</h4>
+      <p>Weak logins: no brute-force limits, credential stuffing, guessable sessions, weak password rules.</p>
+      <div class="why"><b>WHY IT WORKS:</b> If login accepts unlimited guesses and reused passwords, attackers automate their way in with leaked credential lists.</div>
+      <div class="fix"><b>DEFENSE:</b> Multi-factor auth, rate limiting + lockouts, solid session management, check passwords against breach lists.</div></div></div>
+
+    <div class="owasp-row"><div class="owasp-id">A08</div><div><h4>SOFTWARE &amp; DATA INTEGRITY FAILURES</h4>
+      <p>Trusting code or updates whose integrity isn't verified — poisoned dependencies, unsigned updates, tampered build pipelines (how NotPetya spread).</p>
+      <div class="why"><b>WHY IT WORKS:</b> If you auto-pull code/updates without verifying the source, a compromised supplier ships malware straight into you.</div>
+      <div class="fix"><b>DEFENSE:</b> Verify digital signatures, pin &amp; check dependency hashes, secure the CI/CD pipeline, review third-party code.</div></div></div>
+
+    <div class="owasp-row"><div class="owasp-id">A09</div><div><h4>LOGGING &amp; MONITORING FAILURES</h4>
+      <p>Attacks that aren't logged or alerted on go unnoticed for months, giving intruders time to dig in.</p>
+      <div class="why"><b>WHY IT WORKS:</b> You can't respond to what you can't see. Silence looks identical to safety until it's far too late.</div>
+      <div class="fix"><b>DEFENSE:</b> Log security events, alert on anomalies, centralize logs, and rehearse an incident-response plan.</div></div></div>
+
+    <div class="owasp-row"><div class="owasp-id">A10</div><div><h4>SSRF (SERVER-SIDE REQUEST FORGERY)</h4>
+      <p>Tricking the server into fetching a URL the attacker chooses — often internal systems the attacker can't reach directly.</p>
+      <div class="why"><b>WHY IT WORKS:</b> The server fetches user-supplied URLs and is trusted on the internal network, so it becomes the attacker's proxy inside.</div>
+      <div class="fix"><b>DEFENSE:</b> Allow-list permitted destinations, block internal IP ranges, and validate/normalize every URL before fetching.</div></div></div>
+  </div>
+</section>
+
+<!-- ================= 07 SECURE COMPUTER ================= -->
+<section id="secure-pc">
+  <div class="sec-head"><span class="sec-num">07</span><span class="sec-title">CYBERSECURITY · SECURE YOUR COMPUTER</span></div>
+  <p class="sec-intro">Hardening a machine isn't one setting — it's a stack of small, boring habits that together make you a hard target. Work through these categories; each closes off a class of attack from the sections above.</p>
+  <div class="grid">
+    <div class="card"><h3>ACCOUNTS &amp; ACCESS</h3>
+      <ul class="tips"><li>Use a <b>standard user</b> account for daily work, not admin/root.</li><li>Strong, unique login password or passphrase.</li><li>Turn on <b>MFA</b> for the OS account and cloud logins.</li><li>Auto-lock the screen after a short idle; lock it when you walk away.</li></ul></div>
+    <div class="card"><h3>UPDATES &amp; PATCHING</h3>
+      <ul class="tips"><li>Enable <b>automatic updates</b> for the OS and every app.</li><li>Update firmware/BIOS and drivers periodically.</li><li>Uninstall software you don't use — less to patch, less to exploit.</li></ul></div>
+    <div class="card"><h3>ENCRYPTION &amp; BACKUP</h3>
+      <ul class="tips"><li>Turn on <b>full-disk encryption</b>: BitLocker (Windows), FileVault (macOS), LUKS (Linux).</li><li>Keep <b>offline, versioned backups</b> (3-2-1) and encrypt them too.</li><li>Test that you can actually restore a backup.</li></ul></div>
+    <div class="card"><h3>NETWORK &amp; FIREWALL</h3>
+      <ul class="tips"><li>Keep the OS <b>firewall on</b>; block inbound you don't need.</li><li>Change your <b>router's default password</b>; use <b>WPA3/WPA2</b> Wi-Fi.</li><li>Update router firmware; disable WPS and remote admin.</li><li>Use a trusted <b>VPN</b> on untrusted networks.</li></ul></div>
+    <div class="card"><h3>MALWARE DEFENSE</h3>
+      <ul class="tips"><li>Run reputable <b>anti-malware / EDR</b> (behavioral, not just signatures).</li><li>Disable Office macros by default; don't "enable content" from email.</li><li>No cracked/pirated software; verify downloads' signatures.</li><li>Show file extensions so <code>x.jpg.exe</code> can't hide.</li></ul></div>
+    <div class="card"><h3>PHYSICAL &amp; MISC</h3>
+      <ul class="tips"><li>Enable <b>Secure Boot</b>; set a BIOS/UEFI password.</li><li>Disable autorun for USB media; be wary of unknown drives.</li><li>Cover the webcam; be mindful of shoulder-surfing.</li><li>Wipe drives securely before selling or recycling.</li></ul></div>
+  </div>
+</section>
+
+<!-- ================= 08 BROWSER SECURITY ================= -->
+<section id="browser">
+  <div class="sec-head"><span class="sec-num">08</span><span class="sec-title">BROWSER SECURITY</span></div>
+  <p class="sec-intro">Your browser is the single most-attacked program you run — it executes untrusted code from every site you visit. Lock it down and you shut off phishing, malvertising, and a huge share of everyday attacks.</p>
+  <div class="grid">
+    <div class="card"><h3>KEEP IT CURRENT</h3>
+      <ul class="tips"><li>Let the browser <b>auto-update</b> — it patches actively-exploited bugs.</li><li>Restart when it asks; that's when the fix applies.</li></ul></div>
+    <div class="card"><h3>ENFORCE HTTPS</h3>
+      <ul class="tips"><li>Turn on <b>HTTPS-Only mode</b>.</li><li>Never click past "your connection is not private" warnings.</li><li>Check the domain spelling — lookalikes (<code>paypa1.com</code>) are the whole trick.</li></ul></div>
+    <div class="card"><h3>EXTENSIONS = RISK</h3>
+      <ul class="tips"><li>Install <b>few</b>, only from official stores, with good reputations.</li><li>Read the permissions ("read all data on all sites" is a lot).</li><li>Audit and remove extensions you no longer use.</li></ul></div>
+    <div class="card"><h3>BLOCK &amp; SANDBOX</h3>
+      <ul class="tips"><li>Use a reputable <b>ad/tracker blocker</b> — stops malvertising.</li><li>Keep <b>site isolation / sandbox</b> enabled (default in modern browsers).</li><li>Block <b>third-party cookies</b>.</li></ul></div>
+    <div class="card"><h3>PASSWORDS &amp; MFA</h3>
+      <ul class="tips"><li>Prefer a dedicated <b>password manager</b> over the browser's saved passwords.</li><li>Turn on <b>MFA</b> everywhere it's offered.</li><li>Autofill only on the exact right domain — a mismatch is a phishing tell.</li></ul></div>
+    <div class="card"><h3>PRIVACY &amp; DNS</h3>
+      <ul class="tips"><li>Enable <b>DNS-over-HTTPS</b> to stop DNS snooping/spoofing.</li><li>Use a hardened/private profile for sensitive tasks.</li><li>Turn on Safe Browsing / download protection.</li></ul></div>
+  </div>
+  <div class="note"><b>QUICK CHECK:</b> right now, is your browser set to HTTPS-only, do you have an ad-blocker, and are you using a password manager with MFA? Those three cover most day-to-day web risk.</div>
+</section>
+
+<!-- ================= 09 CODING ================= -->
+<section id="coding">
+  <div class="sec-head"><span class="sec-num">09</span><span class="sec-title">CODE · HOW IT STARTED &amp; WORKS</span></div>
+  <p class="sec-intro">Every program — and every piece of malware — is just instructions a machine follows. Understanding how code becomes action demystifies both building software and defending against hostile software.</p>
+
+  <h4 class="blk">A SHORT HISTORY OF CODE</h4>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-year">1843</div><div class="tl-name">The first algorithm</div>
+      <p><b>Ada Lovelace</b> wrote what's considered the first computer program — an algorithm for Charles Babbage's (never-built) Analytical Engine — and foresaw that machines could manipulate more than just numbers.</p></div>
+    <div class="tl-item"><div class="tl-year">1936</div><div class="tl-name">The theory of computation</div>
+      <p><b>Alan Turing</b> described the "Turing machine," a mathematical model proving what computers can and can't compute — the foundation of computer science.</p></div>
+    <div class="tl-item"><div class="tl-year">1940s-50s</div><div class="tl-name">Machine &amp; assembly language</div>
+      <p>Early computers were programmed in raw binary, then <b>assembly</b> — human-readable shorthand mapped one-to-one to CPU instructions. Grace Hopper's work led to the first <b>compilers</b>.</p></div>
+    <div class="tl-item"><div class="tl-year">1957-72</div><div class="tl-name">High-level languages</div>
+      <p><b>Fortran</b> (1957) let scientists write formulas instead of machine code; <b>C</b> (1972, Dennis Ritchie) became the language that operating systems are built in. Abstraction exploded from here into today's thousands of languages.</p></div>
+  </div>
+
+  <h4 class="blk">HOW CODE ACTUALLY RUNS</h4>
+  <figure>
+    <svg viewBox="0 0 720 130" role="img" aria-label="How code runs pipeline">
+      <g fill="none" stroke-width="1.5">
+        <rect x="16" y="44" width="150" height="56" stroke="#22e0ff"/><rect x="196" y="44" width="160" height="56" stroke="#ffb020"/><rect x="386" y="44" width="150" height="56" stroke="#22e0ff"/><rect x="566" y="44" width="138" height="56" stroke="#22e0ff"/>
+      </g>
+      <text x="91" y="70" text-anchor="middle" class="svg-label-c">SOURCE CODE</text><text x="91" y="88" text-anchor="middle" class="svg-small">what humans write</text>
+      <text x="276" y="70" text-anchor="middle" class="svg-label">COMPILER /</text><text x="276" y="86" text-anchor="middle" class="svg-label">INTERPRETER</text>
+      <text x="461" y="70" text-anchor="middle" class="svg-label-c">MACHINE CODE</text><text x="461" y="88" text-anchor="middle" class="svg-small">1s and 0s</text>
+      <text x="635" y="70" text-anchor="middle" class="svg-label-c">CPU RUNS IT</text><text x="635" y="88" text-anchor="middle" class="svg-small">actions happen</text>
+      <g stroke-width="2" class="flow-dash"><line x1="166" y1="72" x2="196" y2="72" stroke="#22e0ff"/><line x1="356" y1="72" x2="386" y2="72" stroke="#ffb020"/><line x1="536" y1="72" x2="566" y2="72" stroke="#22e0ff"/></g>
+      <text x="360" y="22" text-anchor="middle" class="svg-label-c">SOURCE → TRANSLATED → EXECUTED</text>
+    </svg>
+    <figcaption>FIG 9.0 — a compiler translates your whole program ahead of time; an interpreter runs it line-by-line. Either way the CPU only ever runs machine code.</figcaption>
+  </figure>
+  <p class="lead">The building blocks are the same in every language: <b>variables</b> (store data), <b>conditionals</b> (if/else — make decisions), <b>loops</b> (repeat work), <b>functions</b> (reusable named steps), and <b>data structures</b> (organize information). Master those five ideas and you can read almost any code.</p>
+
+  <h4 class="blk">HOW MALWARE IS BUILT — AND WHY WE STUDY DEFENSE</h4>
+  <p class="lead">Here's the demystifying truth: <b>malware is ordinary software.</b> It's written in the same languages (C, Python, Go, Assembly, JavaScript), uses the same operating system APIs, and follows the same logic structures as benign apps. The only difference is <i>intent</i> and <i>consent</i>. A script that encrypts files to back them up is a backup tool; one that encrypts them without your consent and demands money is ransomware. Understanding this removes the mystique and lets you analyze code by what it actually does, not what it calls itself.</p>
+</section>
+
+<!-- ================= 10 TERMINAL ================= -->
+<section id="terminal">
+  <div class="sec-head"><span class="sec-num">10</span><span class="sec-title">INTERACTIVE TERMINAL</span></div>
+  <p class="sec-intro">Test your commands below. Type <code>help</code> for available commands, <code>status</code> for system vitals, <code>scan</code> for a network audit simulation, or <code>matrix</code> to toggle the rain speed.</p>
+  
+  <div class="term-box">
+    <div class="term-bar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span>root@matrixrabbit1337:~# bash</span>
+    </div>
+    <div class="term-out" id="termOut">MATRIXRABBIT1337 v3.7.1 [SECURE KERNEL ACTIVE]
+Type 'help' to list available commands.
+</div>
+    <div class="term-input">
+      <span class="term-prompt">root@anonymous:~#</span>
+      <input type="text" id="termIn" autofocus autocomplete="off" spellcheck="false" placeholder="type a command...">
+    </div>
+  </div>
+</section>
+
+<!-- ================= 11 METHODOLOGY ================= -->
+<section id="methods">
+  <div class="sec-head"><span class="sec-num">11</span><span class="sec-title">SECURITY METHODOLOGY</span></div>
+  <p class="sec-intro">Ethical hacking and penetration testing follow a rigorous, structured lifecycle. Jumping straight to exploitation without reconnaissance is just guessing. Every formal assessment moves through five distinct phases:</p>
+  
+  <div class="phasewrap">
+    <div class="phase">
+      <div class="n">01</div>
+      <h5>RECON</h5>
+      <p>Passive &amp; active gathering: OSINT, footprinting, domain info, social mapping.</p>
+    </div>
+    <div class="phase">
+      <div class="n">02</div>
+      <h5>SCANNING</h5>
+      <p>Port scanning, service version detection, vulnerability enumeration (Nmap, Nessus).</p>
+    </div>
+    <div class="phase red">
+      <div class="n">03</div>
+      <h5>EXPLOITATION</h5>
+      <p>Targeted breaching using known flaws, weak configs, or social engineering.</p>
+    </div>
+    <div class="phase">
+      <div class="n">04</div>
+      <h5>PERSISTENCE</h5>
+      <p>Maintaining access securely via backdoors, scheduled tasks, or kernel hooks.</p>
+    </div>
+    <div class="phase">
+      <div class="n">05</div>
+      <h5>REPORTING</h5>
+      <p>Documenting vulnerabilities clearly with remediation steps for defenders.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 12 UNDERGROUND / TOR ================= -->
+<section id="underground">
+  <div class="sec-head"><span class="sec-num">12</span><span class="sec-title">ANONYMITY &amp; THE DARK WEB</span></div>
+  <p class="sec-intro">Anonymity networks like Tor (The Onion Router) were originally developed by the U.S. Naval Research Laboratory to protect government intelligence communications. Today, they serve journalists, activists, and privacy advocates worldwide — alongside threat actors.</p>
+  
+  <figure>
+    <svg viewBox="0 0 720 180" role="img" aria-label="Tor onion routing layers diagram">
+      <rect x="20" y="60" width="100" height="60" fill="none" stroke="#00ff41" stroke-width="1.5"/>
+      <text x="70" y="95" text-anchor="middle" class="svg-label-g">USER</text>
+      
+      <rect x="180" y="60" width="100" height="60" fill="none" stroke="#ffb000" stroke-width="1.5"/>
+      <text x="230" y="90" text-anchor="middle" class="svg-label">ENTRY</text>
+      <text x="230" y="106" text-anchor="middle" class="svg-small">knows you</text>
+      
+      <rect x="340" y="60" width="100" height="60" fill="none" stroke="#ffb000" stroke-width="1.5"/>
+      <text x="390" y="90" text-anchor="middle" class="svg-label">MIDDLE</text>
+      <text x="390" y="106" text-anchor="middle" class="svg-small">blind relay</text>
+      
+      <rect x="500" y="60" width="100" height="60" fill="none" stroke="#ff2b3d" stroke-width="1.5"/>
+      <text x="550" y="90" text-anchor="middle" class="svg-label-r">EXIT</text>
+      <text x="550" y="106" text-anchor="middle" class="svg-small">sees destination</text>
+
+      <rect x="630" y="60" width="70" height="60" fill="none" stroke="#00ff41" stroke-width="1.5"/>
+      <text x="665" y="95" text-anchor="middle" class="svg-label-g">SITE</text>
+
+      <line x1="120" y1="90" x2="180" y2="90" stroke="#00ff41" stroke-width="1.5" class="flow-dash"/>
+      <line x1="280" y1="90" x2="340" y2="90" stroke="#ffb000" stroke-width="1.5" class="flow-dash"/>
+      <line x1="440" y1="90" x2="500" y2="90" stroke="#ffb000" stroke-width="1.5" class="flow-dash"/>
+      <line x1="600" y1="90" x2="630" y2="90" stroke="#ff2b3d" stroke-width="1.5" class="flow-dash"/>
+      <text x="360" y="30" text-anchor="middle" class="svg-label-g">THE ONION ROUTING MULTI-LAYER ENCRYPTION PRINCIPLE</text>
+    </svg>
+    <figcaption>FIG 12.0 — onion routing wraps traffic in three layers of encryption. No single node knows both who sent the data and where it's going.</figcaption>
+  </figure>
+  <p class="lead">Each node strips one layer of encryption (like peeling an onion) to read only the next hop. This guarantees that entry nodes know the sender but not the destination, while exit nodes know the destination but not the sender.</p>
+</section>
+
+<!-- ================= 13 HARDENING ================= -->
+<section id="harden">
+  <div class="sec-head"><span class="sec-num">13</span><span class="sec-title">ADVANCED SYSTEM HARDENING</span></div>
+  <p class="sec-intro">Basic security stops casual scripts; advanced hardening stops targeted intrusion. Enterprise and hardened personal systems implement strict access controls, kernel hardening, and continuous monitoring.</p>
+  <ul class="check">
+    <li><b>Mandatory Access Control (MAC):</b> Implement SELinux or AppArmor to restrict process privileges beyond standard user permissions.</li>
+    <li><b>Kernel Hardening:</b> Disable core dumps, restrict dmesg access, configure sysctl parameters against SYN floods and IP spoofing.</li>
+    <li><b>Code Integrity &amp; Execution Prevention:</b> Enable DEP/NX (Data Execution Prevention) and ASLR (Address Space Layout Randomization) to block buffer overflow exploitation.</li>
+    <li><b>Centralized Logging &amp; SIEM:</b> Ship logs off-site instantly so an attacker cannot tamper with local audit trails after compromising a host.</li>
+  </ul>
+</section>
+
+<!-- ================= 14 DISCORD ================= -->
+<section id="discord">
+  <div class="sec-head"><span class="sec-num">14</span><span class="sec-title">COMMUNICATION &amp; INTEL</span></div>
+  <p class="sec-intro">Connect with the collective, share defensive research, and trade security tools. Remember: verify every contact, trust no unauthenticated handshake.</p>
+  
+  <div class="discord">
+    <div class="handle">@MatrixRabbit1337</div>
+    <p class="hero-sub" style="margin:12px auto 20px">Secure Discord Channel / Direct Transmission Frequency</p>
+    <div class="row">
+      <button class="chip" id="copyBtn" onclick="copyDiscord()"><b>[ COPY HANDLE ]</b></button>
+      <a class="chip" href="https://discord.com" target="_blank" rel="noopener"><b>[ OPEN DISCORD ]</b></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <p class="warn">⚠ ALL RIGHTS RESERVED — DEFENSIVE CYBERSECURITY TERMINAL</p>
+  <p>MATRIX RABBIT 1337 :: NO WIFI HERE :: KNOW THE ATTACK · KILL THE ATTACK</p>
+</footer>
+
+</div> <!-- end #site -->
+
+<script>
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz#@$%&*<>\\/';
+  const fontSize = 14;
+  let columns = Math.floor(canvas.width / fontSize);
+  let drops = Array(columns).fill(1);
+
+  let rainSpeedMultiplier = 1;
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(5, 8, 5, 0.12)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#00ff41';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars.charAt(Math.floor(Math.random() * chars.length));
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i] += rainSpeedMultiplier;
+    }
+  }
+  setInterval(drawMatrix, 35);
+
+  document.getElementById('enterBtn').addEventListener('click', () => {
+    document.getElementById('intro-screen').style.display = 'none';
+    document.getElementById('site').style.display = 'block';
+  });
+
+  const legionText = document.getElementById('legionText');
+  const greeting = "SYSTEM INITIALIZED. ACCESS GRANTED TO MATRIXRABBIT1337 TERMINAL.";
+  let gIndex = 0;
+  function typeLegion() {
+    if (gIndex < greeting.length) {
+      legionText.textContent += greeting.charAt(gIndex);
+      gIndex++;
+      setTimeout(typeLegion, 35);
+    } else {
+      legionText.innerHTML += '<span class="cursor"></span>';
+    }
+  }
+  setTimeout(typeLegion, 500);
+
+  const termOut = document.getElementById('termOut');
+  const termIn = document.getElementById('termIn');
+
+  termIn.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const cmd = termIn.value.trim();
+      if (!cmd) return;
+      
+      termOut.textContent += '\nroot@matrixrabbit1337:~# ' + cmd + '\n';
+      processCommand(cmd.toLowerCase());
+      termIn.value = '';
+      termOut.scrollTop = termOut.scrollHeight;
+    }
+  });
+
+  function processCommand(c) {
+    switch(c) {
+      case 'help':
+        termOut.textContent += `Available commands:
+  - help     : display this help menu
+  - status   : check security terminal vitals
+  - scan     : simulate local network vulnerability scan
+  - matrix   : toggle matrix rain speed (fast/normal)
+  - whoami   : display current security clearance
+  - clear    : clear terminal screen
+  - easteregg: ???\n`;
+        break;
+      case 'status':
+        termOut.textContent += `[SYS] Core: ONLINE\n[SYS] Firewall: ACTIVE (Strict Rules)\n[SYS] Encryption: AES-256 / TLS 1.3\n[SYS] Threats Detected: 0\n`;
+        break;
+      case 'scan':
+        termOut.textContent += `[+] Initiating local interface reconnaissance...\n[+] Port 22 (SSH): SECURED / KEY-ONLY\n[+] Port 80 (HTTP): REDIRECTING TO HTTPS\n[+] Port 443 (HTTPS): ACTIVE [TLS 1.3]\n[+] Scan complete. No unauthorized listeners found.\n`;
+        break;
+      case 'matrix':
+        rainSpeedMultiplier = rainSpeedMultiplier === 1 ? 2.5 : 1;
+        termOut.textContent += `[SYS] Matrix rain velocity adjusted.\n`;
+        break;
+      case 'whoami':
+        termOut.textContent += `root@matrixrabbit1337 [Clearance Level: MAXIMUM - DEFENDER]\n`;
+        break;
+      case 'clear':
+        termOut.textContent = 'MATRIXRABBIT1337 v3.7.1 [SECURE KERNEL ACTIVE]\n';
+        break;
+      case 'easteregg':
+        termOut.textContent += `🐰 "There is no spoon. Know the attack, kill the attack."\n`;
+        break;
+      default:
+        termOut.textContent += `Command not recognized: '${c}'. Type 'help' for valid commands.\n`;
+    }
+  }
+
+  function copyDiscord() {
+    navigator.clipboard.writeText('@MatrixRabbit1337');
+    const btn = document.getElementById('copyBtn');
+    btn.innerHTML = '<b>[ COPIED TO CLIPBOARD ]</b>';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.innerHTML = '<b>[ COPY HANDLE ]</b>';
+      btn.classList.remove('copied');
+    }, 2000);
+  }
+</script>
+</body>
+</html>
+
